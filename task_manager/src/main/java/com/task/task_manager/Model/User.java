@@ -13,24 +13,26 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 import lombok.Data;
 
-
 @Entity
+@Table(name = "users")  // Changed from default "user" which is a reserved keyword in PostgreSQL
 @Data
 public class User {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)      
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private long id;
     
-    @Column(unique = true, nullable = false)
+    @Column(name = "username", unique = true, nullable = false)
     private String username;
 
-    @Column(unique = true,nullable = false)
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
    
-    @Column(nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "last_login")
@@ -39,22 +41,22 @@ public class User {
     @Column(name = "last_activity")
     private LocalDateTime lastActivity;
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference
-    List<Task> task= new ArrayList<>();
+    private List<Task> task = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<ForgetPassword> forgetPassword = new ArrayList<>();
  
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<HabitTracker> habitTrackers=new ArrayList<>();
+    private List<HabitTracker> habitTrackers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Reminder> reminders = new ArrayList<>(); 
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<ActivityLog> activityLogs = new ArrayList<>();
 }

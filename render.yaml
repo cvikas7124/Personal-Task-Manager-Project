@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: task-manager-app
+    env: docker
+    dockerfilePath: ./Dockerfile
+    buildCommand: cd task_manager && ./mvnw clean package -DskipTests
+    startCommand: java -jar app.jar
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: JDBC_DATABASE_URL
+        fromDatabase:
+          name: task_manager_db
+          property: jdbcUrl
+      - key: POSTGRES_USER
+        fromDatabase:
+          name: task_manager_db
+          property: user
+      - key: POSTGRES_PASSWORD
+        fromDatabase:
+          name: task_manager_db
+          property: password
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: task-manager-redis
+          property: host
+      - key: REDIS_PORT
+        value: "6379"
+      - key: REDIS_PASSWORD
+        fromService:
+          type: redis
+          name: task-manager-redis
+          property: password
+      - key: PORT
+        value: "8080"
+    healthCheckPath: /
+    
+  - type: redis
+    name: task-manager-redis
+    ipAllowList: []
+    plan: free
+    
+databases:
+  - name: task_manager_db
+    databaseName: task_manager
+    plan: free
