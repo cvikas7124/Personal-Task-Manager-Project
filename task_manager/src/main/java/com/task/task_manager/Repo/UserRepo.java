@@ -18,6 +18,6 @@ public interface UserRepo  extends JpaRepository<User,Long>{
 
     Optional<User> findByUsername(String username);
     Optional<User> findByEmail(String email);
-    @Query(value = "SELECT * FROM user WHERE DATE(last_login) = :targetDate", nativeQuery = true)
+    @Query(value = "SELECT * FROM users WHERE DATE(last_login) = :targetDate", nativeQuery = true)
     List<User> findUserByLoginDate(@Param("targetDate") LocalDate targetDate);
 }

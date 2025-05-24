@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: task-manager-app
+    env: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+    plan: free
+
+  - type: redis
+    name: task-manager-redis
+    ipAllowList: []
+    plan: free
+
+databases:
+  - name: task_manager_db
+    databaseName: task_manager
+    plan: free
