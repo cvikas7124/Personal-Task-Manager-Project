@@ -10,7 +10,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class TaskManagerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TaskManagerApplication.class, args);
+		 SpringApplication app = new SpringApplication(TaskManagerApplication.class);
+        app.setAdditionalProfiles("prod");  // Force prod profile regardless of environment
+        System.out.println("🌐 Render ENV - DB URL = " + System.getenv("SPRING_DATASOURCE_URL"));
+        app.run(args);
 	}
 
 }

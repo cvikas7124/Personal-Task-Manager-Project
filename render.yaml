@@ -3,44 +3,61 @@ services:
     name: task-manager-app
     env: docker
     dockerfilePath: ./Dockerfile
+    plan: free
     buildCommand: cd task_manager && ./mvnw clean package -DskipTests
     startCommand: java -jar app.jar
     envVars:
-      - key: SPRING_PROFILES_ACTIVE
-        value: prod
-      - key: JDBC_DATABASE_URL
+      # ✅ PostgreSQL: Use correct property 'jdbcUrl'
+      - key: SPRING_DATASOURCE_URL
         fromDatabase:
           name: task_manager_db
           property: jdbcUrl
-      - key: POSTGRES_USER
+      - key: SPRING_DATASOURCE_USERNAME
         fromDatabase:
           name: task_manager_db
           property: user
-      - key: POSTGRES_PASSWORD
+      - key: SPRING_DATASOURCE_PASSWORD
         fromDatabase:
           name: task_manager_db
           property: password
-      - key: REDIS_HOST
+
+      # ✅ Redis: Injected automatically
+      - key: SPRING_REDIS_HOST
         fromService:
           type: redis
           name: task-manager-redis
           property: host
-      - key: REDIS_PORT
-        value: "6379"
-      - key: REDIS_PASSWORD
+      - key: SPRING_REDIS_PORT
+        fromService:
+          type: redis
+          name: task-manager-redis
+          property: port
+      - key: SPRING_REDIS_PASSWORD
         fromService:
           type: redis
           name: task-manager-redis
           property: password
-      - key: PORT
+
+      # ✅ Other environment variables
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: SERVER_PORT
         value: "8080"
-    healthCheckPath: /
-    
+      - key: JAVA_TOOL_OPTIONS
+        value: "-Xmx512m -XX:+UseContainerSupport"
+      - key: SPRING_MAIL_USERNAME
+        value: tickit232@gmail.com
+      - key: SPRING_MAIL_PASSWORD
+        value: jlyitkncajrlwrcv
+
+    healthCheckPath: /actuator/health
+    autoDeploy: true
+
   - type: redis
     name: task-manager-redis
     ipAllowList: []
     plan: free
-    
+
 databases:
   - name: task_manager_db
     databaseName: task_manager
